@@ -2,9 +2,16 @@
 	"song": "",
 	"offset": "",
 	"bpm": 135,
+	"speed": 256,
 	"events": [
-		{ "step": [1, 1], "dirs": [9] }
-		{ "step": [1, 7], "dirs": [4] }
-		{ "step": [2, 1], "dirs": [3] }
+		{ "step": [1, 1], "dirs": ["NE"] },
+		{ "step": [1, 7], "dirs": ["W"] },
+		{ "step": [2, 1], "dirs": ["SE"] },
+		{ "step": [2, 7], "dirs": ["E"] },
+		{ "step": [3, 1], "dirs": ["SW"] },
+		{ "step": [3, 7], "dirs": ["N"] },
+		{ "step": [4, 1], "dirs": ["SW"] },
+		{ "step": [4, 3], "dirs": ["S"] },
+		{ "step": [4, 5], "dirs": ["SE"] },
 	]
 }

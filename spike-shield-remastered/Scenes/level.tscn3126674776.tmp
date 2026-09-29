@@ -1,0 +1,82 @@
+[gd_scene format=3 uid="uid://ci7b36ib3afb5"]
+
+[ext_resource type="Texture2D" uid="uid://bkisu0avmhti3" path="res://Assets/ball.aseprite" id="1_6phgx"]
+[ext_resource type="Texture2D" uid="uid://bg005ui1utosp" path="res://Assets/shield.aseprite" id="2_81xng"]
+[ext_resource type="Script" uid="uid://w5s2s08pyr5u" path="res://Scripts/ShieldControl.gd" id="2_wqkje"]
+[ext_resource type="Texture2D" uid="uid://xf6fv4ktkctv" path="res://Assets/tower.aseprite" id="3_wqkje"]
+[ext_resource type="Script" uid="uid://c6bp12hmvneja" path="res://Scripts/SpikeHandler.gd" id="4_wqkje"]
+[ext_resource type="PackedScene" uid="uid://p127daw1f10m" path="res://Scenes/spike.tscn" id="5_0f350"]
+
+[node name="Level" type="Node2D" unique_id=1179817493]
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=243665300]
+
+[node name="Ball" type="Sprite2D" parent="." unique_id=752826983 node_paths=PackedStringArray("orbiter")]
+texture = ExtResource("1_6phgx")
+script = ExtResource("2_wqkje")
+orbiter = NodePath("Shield")
+metadata/_aseprite_wizard_interface_config_ = {
+"animation_section": false,
+"layer_section": false,
+"output_section": false,
+"pending_changes": {
+"convert_fps_field": 60.0,
+"convert_ms_field": 16.0,
+"convert_to_fps": false,
+"embed_tex": true,
+"i_mode": 0,
+"keep_anim_length": false,
+"layers": [],
+"o_ex_p": "",
+"o_folder": "",
+"o_name": "",
+"only_visible": false,
+"player": "",
+"scale": "1.0",
+"slice": "",
+"source": "res://Assets/ball.aseprite",
+"source_uid": 6188926047434884205
+},
+"slice_section": false
+}
+
+[node name="Shield" type="Sprite2D" parent="Ball" unique_id=1828653042]
+position = Vector2(0, -24)
+texture = ExtResource("2_81xng")
+
+[node name="Towers" type="Node2D" parent="." unique_id=2067019858]
+script = ExtResource("4_wqkje")
+spawn_points_path = NodePath(".")
+object_scene = ExtResource("5_0f350")
+
+[node name="N" type="Sprite2D" parent="Towers" unique_id=1563452171]
+position = Vector2(0, -160)
+texture = ExtResource("3_wqkje")
+
+[node name="NE" type="Sprite2D" parent="Towers" unique_id=2133622097]
+position = Vector2(113.14, -113.14)
+texture = ExtResource("3_wqkje")
+
+[node name="NW" type="Sprite2D" parent="Towers" unique_id=548113834]
+position = Vector2(-113.14, -113.14)
+texture = ExtResource("3_wqkje")
+
+[node name="SW" type="Sprite2D" parent="Towers" unique_id=1355661433]
+position = Vector2(-113.14, 113.14)
+texture = ExtResource("3_wqkje")
+
+[node name="SE" type="Sprite2D" parent="Towers" unique_id=322934776]
+position = Vector2(113.14, 113.14)
+texture = ExtResource("3_wqkje")
+
+[node name="S" type="Sprite2D" parent="Towers" unique_id=1333655089]
+position = Vector2(0, 161)
+texture = ExtResource("3_wqkje")
+
+[node name="W" type="Sprite2D" parent="Towers" unique_id=894051346]
+position = Vector2(-160, 0)
+texture = ExtResource("3_wqkje")
+
+[node name="E" type="Sprite2D" parent="Towers" unique_id=584102747]
+position = Vector2(160, 0)
+texture = ExtResource("3_wqkje")

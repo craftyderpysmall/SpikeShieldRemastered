@@ -24,6 +24,12 @@ window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/stretch/scale_mode="integer"
 window/vsync/vsync_mode=0
+mouse_cursor/custom_image="uid://cvpckvdd1d7n"
+mouse_cursor/custom_image_hotspot=Vector2(16, 16)
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/AsepriteWizard/plugin.cfg")
 
 [physics]
 

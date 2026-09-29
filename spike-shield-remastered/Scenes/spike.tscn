@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://p127daw1f10m"]
+
+[ext_resource type="Texture2D" uid="uid://bdsnikdxm0g43" path="res://Assets/spike.aseprite" id="1_cdj5a"]
+
+[node name="Spike" type="Sprite2D" unique_id=394400938]
+texture = ExtResource("1_cdj5a")
