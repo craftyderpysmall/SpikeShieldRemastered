@@ -1,0 +1,128 @@
+[gd_scene format=3 uid="uid://ci7b36ib3afb5"]
+
+[ext_resource type="Texture2D" uid="uid://bkisu0avmhti3" path="res://Assets/ball.aseprite" id="1_6phgx"]
+[ext_resource type="Texture2D" uid="uid://bg005ui1utosp" path="res://Assets/shield.aseprite" id="2_81xng"]
+[ext_resource type="Script" uid="uid://gsfuin1gs3o" path="res://Scripts/HitboxDetectorBall.gd" id="2_bvt00"]
+[ext_resource type="Script" uid="uid://w5s2s08pyr5u" path="res://Scripts/ShieldControl.gd" id="2_wqkje"]
+[ext_resource type="Script" uid="uid://rq3xtj2hvmbn" path="res://Scripts/HitboxDetectorShield.gd" id="3_754fn"]
+[ext_resource type="Texture2D" uid="uid://xf6fv4ktkctv" path="res://Assets/tower.aseprite" id="3_wqkje"]
+[ext_resource type="Script" uid="uid://c6bp12hmvneja" path="res://Scripts/SpikeHandler.gd" id="4_wqkje"]
+[ext_resource type="PackedScene" uid="uid://p127daw1f10m" path="res://Scenes/spike.tscn" id="5_0f350"]
+[ext_resource type="AudioStream" uid="uid://bqbp6ggrqd1hb" path="res://Music/Deadlocked.mp3" id="7_8c0lf"]
+[ext_resource type="AudioStream" uid="uid://c408nx63f2pqv" path="res://Assets/Audio/click_002.ogg" id="10_oqgf2"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_12j5o"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_12j5o"]
+
+[node name="Level" type="Node2D" unique_id=1179817493]
+
+[node name="Player" type="Node2D" parent="." unique_id=605783803 node_paths=PackedStringArray("center", "orbiter")]
+script = ExtResource("2_wqkje")
+center = NodePath("../Ball")
+orbiter = NodePath("../Shield")
+radius = null
+rotation_offset = null
+controller_deadzone = null
+
+[node name="Ball" type="Area2D" parent="." unique_id=1289111178 node_paths=PackedStringArray("player")]
+script = ExtResource("2_bvt00")
+player = NodePath("../Player")
+
+[node name="Sprite2D" type="Sprite2D" parent="Ball" unique_id=752826983]
+texture = ExtResource("1_6phgx")
+metadata/_aseprite_wizard_interface_config_ = {
+"animation_section": false,
+"layer_section": false,
+"output_section": false,
+"pending_changes": {
+"convert_fps_field": 60.0,
+"convert_ms_field": 16.0,
+"convert_to_fps": false,
+"embed_tex": true,
+"i_mode": 0,
+"keep_anim_length": false,
+"layers": [],
+"o_ex_p": "",
+"o_folder": "",
+"o_name": "",
+"only_visible": false,
+"player": "",
+"scale": "1.0",
+"slice": "",
+"source": "res://Assets/ball.aseprite",
+"source_uid": 3105954077908028304
+},
+"slice_section": false
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ball" unique_id=1743492272]
+scale = Vector2(1.6, 1.6)
+shape = SubResource("CircleShape2D_12j5o")
+
+[node name="Shield" type="Area2D" parent="." unique_id=1496137967 node_paths=PackedStringArray("player", "hit_player")]
+script = ExtResource("3_754fn")
+player = NodePath("../Player")
+hit_player = NodePath("../HitPlayer")
+
+[node name="Sprite2D" type="Sprite2D" parent="Shield" unique_id=1828653042]
+texture = ExtResource("2_81xng")
+
+[node name="ConeHitbox" type="CollisionPolygon2D" parent="Shield" unique_id=807560593]
+polygon = PackedVector2Array(-16, 4, 16, 4, 0, 24)
+
+[node name="ShieldHitbox" type="CollisionShape2D" parent="Shield" unique_id=1061841666]
+z_index = 1
+scale = Vector2(1.6, 0.4)
+shape = SubResource("RectangleShape2D_12j5o")
+
+[node name="Towers" type="Node2D" parent="." unique_id=2067019858]
+
+[node name="N" type="Sprite2D" parent="Towers" unique_id=1563452171]
+position = Vector2(0, -160)
+texture = ExtResource("3_wqkje")
+
+[node name="NE" type="Sprite2D" parent="Towers" unique_id=2133622097]
+position = Vector2(113.14, -113.14)
+texture = ExtResource("3_wqkje")
+
+[node name="NW" type="Sprite2D" parent="Towers" unique_id=548113834]
+position = Vector2(-113.14, -113.14)
+texture = ExtResource("3_wqkje")
+
+[node name="SW" type="Sprite2D" parent="Towers" unique_id=1355661433]
+position = Vector2(-113.14, 113.14)
+texture = ExtResource("3_wqkje")
+
+[node name="SE" type="Sprite2D" parent="Towers" unique_id=322934776]
+position = Vector2(113.14, 113.14)
+texture = ExtResource("3_wqkje")
+
+[node name="S" type="Sprite2D" parent="Towers" unique_id=1333655089]
+position = Vector2(0, 161)
+texture = ExtResource("3_wqkje")
+
+[node name="W" type="Sprite2D" parent="Towers" unique_id=894051346]
+position = Vector2(-160, 0)
+texture = ExtResource("3_wqkje")
+
+[node name="E" type="Sprite2D" parent="Towers" unique_id=584102747]
+position = Vector2(160, 0)
+texture = ExtResource("3_wqkje")
+
+[node name="Spikes" type="Node2D" parent="." unique_id=1051468137 node_paths=PackedStringArray("music_player", "player", "ball")]
+script = ExtResource("4_wqkje")
+music_player = NodePath("../MusicPlayer")
+player = NodePath("../Player")
+ball = NodePath("../Ball")
+spawn_points_path = NodePath("../Towers")
+spike_scene = ExtResource("5_0f350")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=243665300]
+
+[node name="MusicPlayer" type="AudioStreamPlayer2D" parent="." unique_id=330229807]
+stream = ExtResource("7_8c0lf")
+
+[node name="HitPlayer" type="AudioStreamPlayer2D" parent="." unique_id=1946386163]
+stream = ExtResource("10_oqgf2")
+volume_db = 2.0

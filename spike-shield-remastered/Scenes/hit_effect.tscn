@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://bkonwxu07g25"]
+
+[ext_resource type="Script" uid="uid://clsuxivfshp6r" path="res://Scripts/ParticleAutoFree.gd" id="1_cji3q"]
+
+[sub_resource type="Curve" id="Curve_oqgf2"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_6v0c6"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[node name="HitEffect" type="CPUParticles2D" unique_id=1434311298]
+emitting = false
+amount = 32
+lifetime = 0.2
+one_shot = true
+explosiveness = 1.0
+lifetime_randomness = 0.5
+spread = 180.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 250.0
+initial_velocity_max = 300.0
+scale_amount_min = 4.0
+scale_amount_max = 8.0
+scale_amount_curve = SubResource("Curve_oqgf2")
+color_ramp = SubResource("Gradient_6v0c6")
+script = ExtResource("1_cji3q")

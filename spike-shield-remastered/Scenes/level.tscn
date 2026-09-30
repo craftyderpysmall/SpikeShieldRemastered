@@ -1,21 +1,45 @@
 [gd_scene format=3 uid="uid://ci7b36ib3afb5"]
 
 [ext_resource type="Texture2D" uid="uid://bkisu0avmhti3" path="res://Assets/ball.aseprite" id="1_6phgx"]
+[ext_resource type="Script" uid="uid://dt7tu2aub6esm" path="res://Scripts/LevelProperties.gd" id="1_pa6b8"]
 [ext_resource type="Texture2D" uid="uid://bg005ui1utosp" path="res://Assets/shield.aseprite" id="2_81xng"]
-[ext_resource type="Script" uid="uid://w5s2s08pyr5u" path="res://Scripts/ShieldControl.gd" id="2_wqkje"]
+[ext_resource type="Script" uid="uid://gsfuin1gs3o" path="res://Scripts/HitboxDetectorBall.gd" id="2_bvt00"]
+[ext_resource type="Script" uid="uid://w5s2s08pyr5u" path="res://Scripts/PlayerControl.gd" id="2_wqkje"]
+[ext_resource type="Script" uid="uid://rq3xtj2hvmbn" path="res://Scripts/HitboxDetectorShield.gd" id="3_754fn"]
 [ext_resource type="Texture2D" uid="uid://xf6fv4ktkctv" path="res://Assets/tower.aseprite" id="3_wqkje"]
 [ext_resource type="Script" uid="uid://c6bp12hmvneja" path="res://Scripts/SpikeHandler.gd" id="4_wqkje"]
 [ext_resource type="PackedScene" uid="uid://p127daw1f10m" path="res://Scenes/spike.tscn" id="5_0f350"]
-[ext_resource type="AudioStream" uid="uid://bqbp6ggrqd1hb" path="res://Music/Deadlocked.mp3" id="7_8c0lf"]
+[ext_resource type="PackedScene" uid="uid://bkonwxu07g25" path="res://Scenes/hit_effect.tscn" id="5_qxfql"]
+[ext_resource type="AudioStream" uid="uid://c408nx63f2pqv" path="res://Assets/Audio/click_002.ogg" id="10_oqgf2"]
+[ext_resource type="AudioStream" uid="uid://d3rp6i4xln363" path="res://Assets/Audio/error_008.ogg" id="12_ha31o"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_12j5o"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_61ot5"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_12j5o"]
 
 [node name="Level" type="Node2D" unique_id=1179817493]
+script = ExtResource("1_pa6b8")
+level_id = 2
 
-[node name="Camera2D" type="Camera2D" parent="." unique_id=243665300]
-
-[node name="Ball" type="Sprite2D" parent="." unique_id=752826983 node_paths=PackedStringArray("orbiter")]
-texture = ExtResource("1_6phgx")
+[node name="Player" type="Node2D" parent="." unique_id=605783803 node_paths=PackedStringArray("center", "orbiter")]
 script = ExtResource("2_wqkje")
-orbiter = NodePath("Shield")
+center = NodePath("../Ball")
+orbiter = NodePath("../Shield")
+
+[node name="Ball" type="Area2D" parent="." unique_id=1289111178 node_paths=PackedStringArray("player", "camera", "hit_player", "death_player", "particle_container", "godmode_hitbox")]
+script = ExtResource("2_bvt00")
+player = NodePath("../Player")
+camera = NodePath("../Camera2D")
+hit_player = NodePath("../HitPlayer")
+death_player = NodePath("../DeathPlayer")
+effect = ExtResource("5_qxfql")
+particle_container = NodePath("../Particles")
+godmode_hitbox = NodePath("GodmodeHitbox")
+
+[node name="Sprite2D" type="Sprite2D" parent="Ball" unique_id=752826983]
+texture = ExtResource("1_6phgx")
 metadata/_aseprite_wizard_interface_config_ = {
 "animation_section": false,
 "layer_section": false,
@@ -36,21 +60,40 @@ metadata/_aseprite_wizard_interface_config_ = {
 "scale": "1.0",
 "slice": "",
 "source": "res://Assets/ball.aseprite",
-"source_uid": 6188926047434884205
+"source_uid": 3105954077908028304
 },
 "slice_section": false
 }
 
-[node name="Shield" type="Sprite2D" parent="Ball" unique_id=1828653042]
-position = Vector2(0, -24)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ball" unique_id=1743492272]
+scale = Vector2(1.6, 1.6)
+shape = SubResource("CircleShape2D_12j5o")
+
+[node name="GodmodeHitbox" type="CollisionShape2D" parent="Ball" unique_id=1707632478]
+scale = Vector2(3.5, 3.5)
+shape = SubResource("CircleShape2D_61ot5")
+disabled = true
+
+[node name="Shield" type="Area2D" parent="." unique_id=1496137967 node_paths=PackedStringArray("player", "camera", "hit_player", "particle_container")]
+script = ExtResource("3_754fn")
+player = NodePath("../Player")
+camera = NodePath("../Camera2D")
+hit_player = NodePath("../HitPlayer")
+effect = ExtResource("5_qxfql")
+particle_container = NodePath("../Particles")
+
+[node name="Sprite2D" type="Sprite2D" parent="Shield" unique_id=1828653042]
 texture = ExtResource("2_81xng")
 
-[node name="Towers" type="Node2D" parent="." unique_id=2067019858 node_paths=PackedStringArray("audio_player", "ball")]
-script = ExtResource("4_wqkje")
-audio_player = NodePath("../AudioStreamPlayer2D")
-ball = NodePath("../Ball")
-spawn_points_path = NodePath(".")
-object_scene = ExtResource("5_0f350")
+[node name="ConeHitbox" type="CollisionPolygon2D" parent="Shield" unique_id=807560593]
+polygon = PackedVector2Array(-16, 4, 16, 4, 0, 24)
+
+[node name="ShieldHitbox" type="CollisionShape2D" parent="Shield" unique_id=1061841666]
+z_index = 1
+scale = Vector2(1.6, 0.4)
+shape = SubResource("RectangleShape2D_12j5o")
+
+[node name="Towers" type="Node2D" parent="." unique_id=2067019858]
 
 [node name="N" type="Sprite2D" parent="Towers" unique_id=1563452171]
 position = Vector2(0, -160)
@@ -84,5 +127,26 @@ texture = ExtResource("3_wqkje")
 position = Vector2(160, 0)
 texture = ExtResource("3_wqkje")
 
-[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=330229807]
-stream = ExtResource("7_8c0lf")
+[node name="Spikes" type="Node2D" parent="." unique_id=1051468137 node_paths=PackedStringArray("level", "music_player", "player", "ball")]
+script = ExtResource("4_wqkje")
+level = NodePath("..")
+music_player = NodePath("../MusicPlayer")
+player = NodePath("../Player")
+ball = NodePath("../Ball")
+spawn_points_path = NodePath("../Towers")
+spike_scene = ExtResource("5_0f350")
+
+[node name="Particles" type="Node2D" parent="." unique_id=1489415543]
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=243665300]
+
+[node name="MusicPlayer" type="AudioStreamPlayer2D" parent="." unique_id=330229807]
+volume_db = -0.25
+
+[node name="HitPlayer" type="AudioStreamPlayer2D" parent="." unique_id=1946386163]
+stream = ExtResource("10_oqgf2")
+volume_db = 2.0
+
+[node name="DeathPlayer" type="AudioStreamPlayer2D" parent="." unique_id=1156155137]
+stream = ExtResource("12_ha31o")
+volume_db = 1.0

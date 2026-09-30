@@ -1,10 +1,11 @@
 extends Node2D
 
-@export var audio_player: AudioStreamPlayer2D
+@export var level: Node2D
+@export var music_player: AudioStreamPlayer2D
+@export var player: Node2D
 @export var ball: Node2D
 @export var spawn_points_path: NodePath
-@export var level_path: String = "res://Levels/deadlocked.json"
-@export var object_scene: PackedScene
+@export var spike_scene: PackedScene
 @export var hit_radius: float = 24.0  # distance from center where beat should land
 @export var rotation_offset: float = -(PI/2)  # radians, to match your sprite's default facing
 
@@ -22,10 +23,13 @@ var song_time_seconds: float = 0.0
 var active_objects: Array = []
 var audio_delay: float = 0.0
 var audio_started: bool = false
+var was_dead: bool = false # To check if recently restarted in _process
+var last_song_time_beats: float = 0.0 # For pulses
 
 func _ready():
 	_load_spawn_points()
-	load_level(level_path)
+	load_level(level.level_path)
+	music_player.stream = load(level.song_path)
 	_setup_audio_offset()
 
 # ---- Read spawn point positions + rotations from the scene tree ----
@@ -52,12 +56,10 @@ func _setup_audio_offset() -> void:
 
 	var timer = get_tree().create_timer(audio_delay)
 	timer.timeout.connect(_start_audio)
-	
-	print()
 
 
 func _start_audio() -> void:
-	audio_player.play()
+	music_player.play()
 	audio_started = true
 	
 # ---- Convert [beat, interval] -> beats since start ----
@@ -86,11 +88,26 @@ func load_level(path: String) -> void:
 	next_event_index = 0
 	song_time_seconds = 0.0
 
-
 # ---- Main loop ----
 func _process(delta: float) -> void:
+	if player.dead == true:
+		dead()
+		was_dead = true
+		return
+	elif player.dead == false and was_dead == true:
+		restart()
+		was_dead = false
+		return
+	
 	song_time_seconds += delta
 	var song_time_beats = song_time_seconds * (bpm / 60.0)
+	
+	# Pulse towers on beat
+	if floor(song_time_beats) > floor(last_song_time_beats):
+		for tower in get_node(spawn_points_path).get_children():
+			pulse(tower)
+
+	last_song_time_beats = song_time_beats
 
 	while next_event_index < events.size() \
 			and events[next_event_index]["beat_time"] <= song_time_beats:
@@ -106,11 +123,20 @@ func _process(delta: float) -> void:
 
 func _update_objects(delta: float) -> void:
 	var center: Vector2 = ball.global_position
+	var objects_to_delete: Array = []
+
+	if player.dead == true:
+		return
 
 	for obj in active_objects:
-		var dir_to_center = (center - obj.position).normalized()
-		obj.position += dir_to_center * speed * delta
-		# check_shield_collision(obj)
+		if is_instance_valid(obj):
+			var dir_to_center = (center - obj.position).normalized()
+			obj.position += dir_to_center * speed * delta
+		else: # Deleted
+			objects_to_delete.append(obj)
+		
+	for obj in objects_to_delete:
+		active_objects.erase(obj)
 
 # ---- Spawning helper ----
 func spawn_object(dir_name: String) -> void:
@@ -121,9 +147,37 @@ func spawn_object(dir_name: String) -> void:
 	var data = spawn_data[dir_name]
 	var center: Vector2 = ball.global_position
 
-	var obj = object_scene.instantiate()
+	var obj = spike_scene.instantiate()
+	obj.name = dir_name + "SPIKE"
 	obj.global_position = data["pos"]
 	obj.rotation = (center - data["pos"]).angle() + rotation_offset
 
 	add_child(obj)
 	active_objects.append(obj)
+	
+func pulse(target: CanvasItem) -> void:
+	if not is_instance_valid(target):
+		return
+	
+	var tween = create_tween().bind_node(target)
+	tween.set_trans(Tween.TRANS_SINE)
+	tween.set_ease(Tween.EASE_IN_OUT)
+	
+	tween.tween_property(target, "scale", Vector2(1.5, 1.5), 0.1)
+	tween.tween_property(target, "scale", Vector2(1.0, 1.0), 0.1)
+	
+	tween.finished.connect(pulse)
+	
+func dead() -> void:
+	music_player.stop()
+	audio_started = false
+	audio_delay = 0.0
+	next_event_index = 0
+	song_time_seconds = 0.0
+	next_event_index = 0
+	active_objects.clear()
+
+func restart() -> void:
+	for child in get_children():
+		child.queue_free()
+	_setup_audio_offset()
